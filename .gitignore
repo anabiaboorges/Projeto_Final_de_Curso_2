@@ -1,0 +1,36 @@
+# Objetos eBPF e binários compilados
+*.o
+*.ll
+vmlinux.h
+
+# Imagens de VM e ISOs
+*.qcow2
+*.img
+*.iso
+*.vdi
+*.vhdx
+
+# Capturas e arquivos grandes de experimentos
+*.pcap
+*.pcapng
+results/**/*.tar.gz
+results/**/*.zip
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# Editores e sistema
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Segredos
+.env
+*.pem
+*.key

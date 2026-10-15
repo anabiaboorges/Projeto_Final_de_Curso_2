@@ -124,7 +124,7 @@ O protocolo é o mesmo do PFC 1, para manter os resultados comparáveis:
 
 ## Estrutura do repositório
 
-*Planejada; será criada conforme o projeto avançar.*
+*Planejada; será criada conforme o projeto avançar.* As regras de organização, branches (`feature/…`, `bugfix/…`) e merge na `main` estão em **[docs/ORGANIZACAO_PROJETO.md](docs/ORGANIZACAO_PROJETO.md)**.
 
 ```
 .
@@ -153,3 +153,4 @@ O protocolo é o mesmo do PFC 1, para manter os resultados comparáveis:
 | Data | Registro |
 |---|---|
 | 15/10/2026 | Repositório criado; README inicial com o resumo do PFC 1 e a proposta do PFC 2. |
+| 15/10/2026 | Spec de organização e Git flow básico (`feature/`, `bugfix/`, merge na `main`) e `.gitignore`. |
