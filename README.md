@@ -80,21 +80,37 @@ Usar o eBPF de forma **ativa** no plano de dados:
 
 ## Ambiente experimental
 
-Visão geral (os detalhes e as versões ficam na pasta `docs/`, à medida que forem definidos):
+Os experimentos rodam no **servidor KVM do PFC 1**, em **duas VMs idênticas**: a VM original do PFC 1 e uma segunda VM disponibilizada pelo orientador com a mesma configuração.
 
 ```
-Host (notebook Windows) ─ WSL2 / KVM
- ├── Núcleo 5G (Open5GS) + UERANSIM (gNB/UE)
- │        │  N3 (GTP-U) / N4 (PFCP)
- │        ▼  bridge Linux (fora do Docker)
- └── VM "upf" (Ubuntu 22.04, kernel 5.15)
-        ★ XDP nativo na interface virtio-net (ingresso N3)
-        ├── UPF 1 · UPF 2 · UPF 3   (contêineres)
-        └── DN (iperf3)
+Servidor KVM (o mesmo do PFC 1)
+├── rede de gerência (NAT/Internet) ── enp1s0 de cada VM
+├── rede dedicada entre as VMs (bridge, virtio multiqueue) ── enp2s0 → N3 + N4
+│
+├── VM1 "core"  · VM original do PFC 1
+│     Open5GS (plano de controle) + MongoDB
+│     UERANSIM (gNB + UE) · geradores de tráfego
+│     enp2s0 = 192.168.100.10
+│
+└── VM2 "upf"   · VM nova, idêntica à do PFC 1
+      enp2s0 = 192.168.100.11 (+ VIP 192.168.100.100)
+      ★ XDP nativo no driver virtio_net (entrada N3 de toda a UPF)
+      UPF 1 · UPF 2 · UPF 3 (contêineres) · DN (iperf3)
+      healthd e agentes que atualizam os mapas eBPF
 ```
 
+| | VM1 · core | VM2 · upf |
+|---|---|---|
+| Origem | VM original do PFC 1 | Clone da VM do PFC 1 |
+| Recursos | 8 vCPU · 32 GiB | 8 vCPU · 32 GiB |
+| Sistema | Ubuntu 22.04.5 · kernel 5.15 | Ubuntu 22.04.5 · kernel 5.15 |
+| Papel | Núcleo 5G, gNB, UE, geradores | UPFs, DN, programas eBPF/XDP |
+
+- **Por que duas VMs:** no PFC 1, a interface N3 da UPF era um par *veth* do Docker, o que impediu o XDP nativo. Na VM2, o tráfego da UPF entra por uma placa **virtio-net**, cujo driver implementa XDP nativo antes da alocação do `sk_buff`.
+- **Por que VMs idênticas às do PFC 1:** mesmo hipervisor, mesmos recursos e mesmo kernel (5.15), o que mantém a comparação com o PFC 1 e evita virtualização aninhada.
+- **Requisitos da rede entre as VMs:** placa virtio com backend vhost, multiqueue (`queues = 2 × vCPU`, ou seja, 16), MTU 1500 e nenhum outro tráfego.
+- **Ambiente alternativo:** um notebook com WSL2 e KVM aninhado (uma VM para a UPF) serve para desenvolvimento e como reserva enquanto a VM2 não fica pronta. Scripts e composes são os mesmos nos dois ambientes.
 - **Ferramentas:** Open5GS, UERANSIM, Docker, KVM/libvirt, clang/LLVM, libbpf, BCC, bpftool, xdp-tools, iperf3, mpstat.
-- **Por que mudar a topologia:** tirando a UPF da rede *bridge* do Docker e colocando-a numa VM com placa `virtio-net`, o XDP nativo roda no driver do kernel convidado, e o problema das *veth* do PFC 1 deixa de existir.
 
 ---
 
@@ -114,7 +130,7 @@ O protocolo é o mesmo do PFC 1, para manter os resultados comparáveis:
 
 | Período | Atividade |
 |---|---|
-| Out/2026 | Preparação do ambiente (WSL2, KVM, VM da UPF, bridge N3) e validação do attach nativo |
+| Out/2026 | Preparação do ambiente (VM2 e rede dedicada no servidor; desenvolvimento no notebook) e validação do attach nativo |
 | Out–Nov | 5GC distribuído e porte dos programas do PFC 1 · várias UPFs e redirecionamento XDP |
 | Nov | Experimentos da Frente 1 · balanceador + heartbeat + bancada sintética |
 | Nov | Experimentos de balanceamento e failover · análise estatística |
@@ -154,3 +170,4 @@ O protocolo é o mesmo do PFC 1, para manter os resultados comparáveis:
 |---|---|
 | 15/10/2026 | Repositório criado; README inicial com o resumo do PFC 1 e a proposta do PFC 2. |
 | 15/10/2026 | Spec de organização e Git flow básico (`feature/`, `bugfix/`, merge na `main`) e `.gitignore`. |
+| 15/10/2026 | Ambiente definido: duas VMs idênticas às do PFC 1 no servidor KVM (VM2 disponibilizada pelo orientador); notebook como ambiente de desenvolvimento. |
