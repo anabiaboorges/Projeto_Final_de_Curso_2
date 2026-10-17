@@ -17,3 +17,4 @@ Para ver o que mudou entre duas versões: `git log -- plans/` (mensagens) ou `gi
 | Versão | Data | Motivo | Arquivo |
 |---|---|---|---|
 | v1.0 | 15/10/2026 | Plano de execução nas 2 VMs idênticas às do PFC 1 (XDP nativo, balanceamento e failover) | [PLANO_v1.0_2026-10-15.md](PLANO_v1.0_2026-10-15.md) |
+| v1.1 | 15/10/2026 | Reunião de orientação de 15/10: classificador na entrada direcionando para múltiplas UPFs, em uma VM | [PLANO_v1.1_2026-10-15.md](PLANO_v1.1_2026-10-15.md) |
