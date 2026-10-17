@@ -8,7 +8,7 @@ Engenharia de Computação · Escola de Engenharia Elétrica, Mecânica e de Com
 |---|---|
 | Discentes | Ana Beatriz Borges Cordeiro · Bianca Pereira de Carvalho |
 | Orientador | Prof. Flávio Geraldo Coelho Rocha |
-| PFC 1 (repositório) | [biancapcarvalho/pfc_ebpf_redes_5g](https://github.com/anabiaboorges/Projeto_Final_de_Curso_1) |
+| PFC 1 (repositório) | [anabiaboorges/Projeto_Final_de_Curso_1](https://github.com/anabiaboorges/Projeto_Final_de_Curso_1) |
 | Status | 🟡 Em andamento: preparação do ambiente experimental |
 
 > Este README é um documento vivo e será atualizado ao longo do semestre (ver [Diário do projeto](#diário-do-projeto)).
